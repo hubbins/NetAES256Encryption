@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace NetAES256Encryption
 {
@@ -9,25 +10,27 @@ namespace NetAES256Encryption
     {
         static void Main(string[] args)
         {
-            var message = "IOxuKVX0sQwbMSYAoSM3X2ZsuWxHIaFXDBJkAHfK70AvvCT8cFaY8V1LZvOuANcHU+Z11ZZLj9vpdCnaNDL9dAmA/WW2xm93BUuGHCRnLLEV3qvCNljRqh3ab2LvAYidJwH1HvZqB3LjkVg53MwCkw==";
-            var password = "JDHQINFAFB12JSKD";
-            var iv = "1234567890123456";
+            var message = "eWJucG9kbXF6aXBvb25wZAtrMD1WxbkMyEvxC/7zdSbjD4BS+omeJzgDId6E4lfCMzQDclf3ANpwxGI3MtU+SK5q+xlegiVgr+9lGajX1TvITSj3CP8ea1Zps2nsDdOInEIV/nvv9tSSasbjBmfyBCoJ+62KspMrcDQr5gwjpBc=";
+            var key = "JDHQINFAFB12JSKD";
 
+            var result = Decrypt(message, key);
+            Console.WriteLine(result);
+        }
+
+        // assumes 16 bytes initialization vector, followed by encrypted data
+        static String Decrypt(String encryptedText, String key)
+        {
+            var encryptedTextBytes = Convert.FromBase64String(encryptedText);
             var aes = new AesManaged();
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
-            aes.Key = UTF8Encoding.UTF8.GetBytes(password);
-            byte[] ivBytes = UTF8Encoding.UTF8.GetBytes(iv);
-            aes.IV = ivBytes;
+            aes.Key = UTF8Encoding.UTF8.GetBytes(key);
+            aes.IV = encryptedTextBytes.Take(16).ToArray();
 
             var decryptor = aes.CreateDecryptor();
-            byte[] messageBytes = Convert.FromBase64String(message);
-            byte[] resultBytes = decryptor.TransformFinalBlock(messageBytes, 0, messageBytes.Length);
-
-            var s = UTF8Encoding.UTF8.GetString(resultBytes);
-            Console.WriteLine(s);
+            var encryptedData = encryptedTextBytes.Skip(16).ToArray();
+            var decryptedBytes = decryptor.TransformFinalBlock(encryptedData, 0, encryptedData.Length);
+            return UTF8Encoding.UTF8.GetString(decryptedBytes);
         }
-
-
     }
 }
