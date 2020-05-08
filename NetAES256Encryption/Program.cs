@@ -18,7 +18,7 @@ namespace NetAES256Encryption
         }
 
         // assumes 16 bytes initialization vector, followed by encrypted data
-        static String Decrypt(String encryptedText, String key)
+        static string Decrypt(string encryptedText, string key)
         {
             var encryptedTextBytes = Convert.FromBase64String(encryptedText);
             var aes = new AesManaged
@@ -29,9 +29,8 @@ namespace NetAES256Encryption
                 IV = encryptedTextBytes.Take(16).ToArray()
             };
 
-            var decryptor = aes.CreateDecryptor();
             var encryptedData = encryptedTextBytes.Skip(16).ToArray();
-            var decryptedBytes = decryptor.TransformFinalBlock(encryptedData, 0, encryptedData.Length);
+            var decryptedBytes = aes.CreateDecryptor().TransformFinalBlock(encryptedData, 0, encryptedData.Length);
             return UTF8Encoding.UTF8.GetString(decryptedBytes);
         }
     }
