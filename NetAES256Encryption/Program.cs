@@ -21,11 +21,13 @@ namespace NetAES256Encryption
         static String Decrypt(String encryptedText, String key)
         {
             var encryptedTextBytes = Convert.FromBase64String(encryptedText);
-            var aes = new AesManaged();
-            aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.PKCS7;
-            aes.Key = UTF8Encoding.UTF8.GetBytes(key);
-            aes.IV = encryptedTextBytes.Take(16).ToArray();
+            var aes = new AesManaged
+            {
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7,
+                Key = UTF8Encoding.UTF8.GetBytes(key),
+                IV = encryptedTextBytes.Take(16).ToArray()
+            };
 
             var decryptor = aes.CreateDecryptor();
             var encryptedData = encryptedTextBytes.Skip(16).ToArray();
