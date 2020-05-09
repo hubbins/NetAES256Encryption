@@ -10,8 +10,8 @@ namespace NetAES256Encryption
     {
         static void Main(string[] args)
         {
-            var message = "eWJucG9kbXF6aXBvb25wZAtrMD1WxbkMyEvxC/7zdSbjD4BS+omeJzgDId6E4lfCMzQDclf3ANpwxGI3MtU+SK5q+xlegiVgr+9lGajX1TvITSj3CP8ea1Zps2nsDdOInEIV/nvv9tSSasbjBmfyBCoJ+62KspMrcDQr5gwjpBc=";
-            var key = "JDHQINFAFB12JSKD";
+            var message = "Z2t6a25yZW1mc2xvYWt4cI2d5CaTVi/z+rshVHluNaQGmqimzRgmufzuNpTrRMbzCkSRucKyYrOIqV4qWXs7fkkwpUdB3nBQtj8nNmVRd5d0mZDvphRCsLY4nsGXCifw1fQGHY61oeJ5LEPD0mwHfTyqynbQoFrQZad0xftjmKE=";
+            var key = "JDHQINFAFB12JSKDJDHQINFAFB12JSKD";
 
             var result = Decrypt(message, key);
             Console.WriteLine(result);
@@ -20,6 +20,9 @@ namespace NetAES256Encryption
         // assumes 16 bytes initialization vector, followed by encrypted data
         static string Decrypt(string encryptedText, string key)
         {
+            if (key.Length != 32)
+                throw new ArgumentException("Key must be 32 characters");
+
             var encryptedTextBytes = Convert.FromBase64String(encryptedText);
             var aes = new AesManaged
             {
