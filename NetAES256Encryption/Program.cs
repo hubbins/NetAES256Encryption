@@ -20,9 +20,9 @@ namespace NetAES256Encryption
         // assumes 16 bytes initialization vector, followed by encrypted data
         static string Decrypt(string encryptedText, string key)
         {
-            using var hash = SHA256.Create();
             var encryptedTextBytes = Convert.FromBase64String(encryptedText);
-            var aes = new AesManaged
+            using var hash = SHA256.Create();
+            using var aes = new AesManaged
             {
                 Mode = CipherMode.CBC,
                 Padding = PaddingMode.PKCS7,
