@@ -10,8 +10,8 @@ namespace NetAES256Encryption
     {
         static void Main(string[] args)
         {
-            var message = "Z2t6a25yZW1mc2xvYWt4cI2d5CaTVi/z+rshVHluNaQGmqimzRgmufzuNpTrRMbzCkSRucKyYrOIqV4qWXs7fkkwpUdB3nBQtj8nNmVRd5d0mZDvphRCsLY4nsGXCifw1fQGHY61oeJ5LEPD0mwHfTyqynbQoFrQZad0xftjmKE=";
-            var key = "JDHQINFAFB12JSKDJDHQINFAFB12JSKD";
+            var message = "ZWtsd2t0d3FlZmNqc3ZyZqbv19g+cRgIqxwiC1KhQ3xKeGclGVNdOtOjV/ebhRpzchPBrWVB8eqgGrxPORcRheqKa3vcKeyMSkaWybX4qFVQJ55HhfjrNEY+i/FO1DHduTxGyM0hCjwFi2MRLG1rFWHa25rz33i1l6IP1/Az2Lk=";
+            var key = "JDHQINFAFB12JSKDFOWOW023@3432FKDSF";
 
             var result = Decrypt(message, key);
             Console.WriteLine(result);
@@ -20,15 +20,13 @@ namespace NetAES256Encryption
         // assumes 16 bytes initialization vector, followed by encrypted data
         static string Decrypt(string encryptedText, string key)
         {
-            if (key.Length != 32)
-                throw new ArgumentException("Key must be 32 characters");
-
+            using var hash = SHA256.Create();
             var encryptedTextBytes = Convert.FromBase64String(encryptedText);
             var aes = new AesManaged
             {
                 Mode = CipherMode.CBC,
                 Padding = PaddingMode.PKCS7,
-                Key = UTF8Encoding.UTF8.GetBytes(key),
+                Key = hash.ComputeHash(Encoding.UTF8.GetBytes(key)),
                 IV = encryptedTextBytes.Take(16).ToArray()
             };
 
